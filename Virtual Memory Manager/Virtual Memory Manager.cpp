@@ -34,6 +34,7 @@ int main() {
     for (int i = 0; i < vector.size(); i++)
         cout << vector[i] << " ";
         saludar();
+        saludar();
 
    switch (input[0]) {
     case 'P':
