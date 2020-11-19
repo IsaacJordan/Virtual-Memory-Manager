@@ -3,6 +3,7 @@
 #include <vector>
 #include <string> 
 #include <cstdlib> 
+#include "Process.h"
 using namespace std;
 
 void invalido() {
@@ -10,6 +11,13 @@ void invalido() {
 }
 void saludar() {
 	cout << "FUNCIONA PRRO!\n";
+}
+
+void proceso(vector<int> info, int count) {
+    Process P = *new Process();
+    P.getData(info[0], info[1],count);
+    P.showData();
+    P.Upload();
 }
 
 vector<int> removeDupWord(string str)
