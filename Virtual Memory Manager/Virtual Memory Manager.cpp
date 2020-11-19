@@ -33,8 +33,6 @@ int main() {
     //Mostramos el contenido de nuestro nuevo vector
     for (int i = 0; i < vector.size(); i++)
         cout << vector[i] << " ";
-        saludar();
-        saludar();
 
    switch (input[0]) {
     case 'P':
