@@ -10,7 +10,6 @@ using namespace std;
 class Process {
 	int bytes;
 	int id;
-	int count;
 	//int PA_LOW;
 	//int PA_HIGH;
 	//int VA_LOW;
@@ -19,10 +18,9 @@ class Process {
 
 public:
 	Process();
-	Process(int,int,int);
-	void getData(int, int,int);
+	Process(int,int);
+	void getData(int, int);
 	void showData();
-	void Upload();
 
 };
 
@@ -31,25 +29,20 @@ Process::Process() {
 	id = 0;
 }
 
-Process::Process(int bytes, int id,int count) {
+Process::Process(int bytes, int id) {
 	this->bytes = bytes;
 	this->id = id;
-	this->count = count;
+	
 }
 
-void Process::getData(int num, int num1,int cuenta) {
+void Process::getData(int num, int num1) {
 	bytes = num;
 	id = num1;
-	count = cuenta;
+	
 }
 
 void Process::showData() {
 	cout << "EL proceso: " << id << " es de: " << bytes << " bytes." << endl;
 }
-
-void Process::Upload() {
-	carga(bytes,id,count);
-}
-
 
 #endif

@@ -7,11 +7,12 @@
     2
     .
     .
-    2047    -pyshical address 2047
+    2047    -pyshical address 2047 = 128 paginas
     ------------------------------------
-    Swapping - S = 4096 bytes
+    Swapping - S = 4096 bytes = 256 paginas
     ------------------------------------
-    Pagina = 16 bytes
+    Pagina = 16 bytes = 1 pagina
+    ------------------------------------
 */
 #include "Saludo.h"
 #include "Process.h"
@@ -33,15 +34,14 @@ int main() {
         getline(cin, input);
         //Enviamos el input a devolver solo los valores numericos
         vector<int> instruccion = removeDupWord(input);
-
+      
         //Mostramos el contenido de nuestro nuevo vector
         //for (int i = 0; i < instruccion.size(); i++)
         //    cout << instruccion[i] << " ";
 
-        switch (input[0]) {
+    switch (input[0]) {
         case 'P':
-            proceso(instruccion,count);
-            count++;
+            cargarproceso(instruccion, count);
             break;
 
         case 'A':

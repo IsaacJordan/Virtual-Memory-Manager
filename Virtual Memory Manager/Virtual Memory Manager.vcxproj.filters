@@ -20,13 +20,13 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Saludo.h">
-      <Filter>Archivos de origen</Filter>
-    </ClInclude>
     <ClInclude Include="Process.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
     <ClInclude Include="RealMemory.h">
+      <Filter>Archivos de origen</Filter>
+    </ClInclude>
+    <ClInclude Include="Saludo.h">
       <Filter>Archivos de origen</Filter>
     </ClInclude>
   </ItemGroup>

@@ -9,15 +9,17 @@ using namespace std;
 void invalido() {
 	cout << "La instruccion no es valida\n";
 }
+
 void saludar() {
 	cout << "FUNCIONA PRRO!\n";
 }
 
-void proceso(vector<int> info, int count) {
-    Process P = *new Process();
-    P.getData(info[0], info[1],count);
+void cargarproceso(vector<int> info, int &count) {
+    /*Process P = *new Process();
+    P.getData(info[0], info[1], count);
     P.showData();
-    P.Upload();
+    P.Upload();*/
+    carga(info[0], info[1], count);
 }
 
 vector<int> removeDupWord(string str)
@@ -35,10 +37,11 @@ vector<int> removeDupWord(string str)
     {
         // print the read word
         //cout << word << "\n";
-        int num = std::stoi(word);
+        int num = stoi(word);
         vector.push_back(num);
     }
 
     vector.erase(vector.begin());
     return vector;
+  
 }
