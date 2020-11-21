@@ -6,22 +6,22 @@
 #include "Process.h"
 using namespace std;
 
-void invalido() {
-	cout << "La instruccion no es valida\n";
-}
-
+//Esta funcion es para realizar debbuging en el codigo
 void saludar() {
 	cout << "FUNCIONA PRRO!\n";
 }
 
+//Esta funcion recibe la informacion del proceso qe se quiere agregar a la memoria real y el contador de memoria
 void cargarproceso(vector<int> info, int &count) {
-    /*Process P = *new Process();
-    P.getData(info[0], info[1], count);
-    P.showData();
-    P.Upload();*/
     carga(info[0], info[1], count);
 }
 
+// Esta funcion es llamada cuando
+void swap(vector<int> info,int &count) {
+    swap(info[0], info[1], count);
+}
+
+//Esta funcion se llama para remover los espacios del string input y guardar en un vector la informacion de tamano de proceso y su id
 vector<int> removeDupWord(string str)
 {
     // Used to split string around spaces.
