@@ -32,6 +32,7 @@ int main() {
         //Declaramos una variable de tipo string para leer el input del usuario
         string input;
         getline(cin, input);
+        cout << "Input: " << input << endl;
         
         //Enviamos el input a devolver solo los valores numericos
         vector<int> instruccion = removeDupWord(input);
@@ -62,7 +63,7 @@ int main() {
             break;
 
         case 'A':
-            saludar();
+            accesso(instruccion);
             break;
 
         case 'L':

@@ -45,3 +45,40 @@ vector<int> removeDupWord(string str)
     return vector;
   
 }
+
+void accesso(vector<int> info) {
+
+    //A 17 5 0 ejemplo
+    int count = 0;
+    int memoria = info[0];
+    int proceso = info[1];
+    int modificar = info[2];
+
+    cout << "Se busca la memoria: " << memoria<< endl;
+    cout << "Del proceso: " << proceso << endl;
+    cout << "Modificar: " << modificar << endl;
+
+    int va = memoria / 16;
+
+    //cout << "Esta en la direccion virtual: " << va << endl;
+
+    for (int i = 0; i < RAM.size(); i++) {
+        if (proceso == RAM.at(i)) {
+            cout << "Se encontro el proceso" << endl;
+            count = i;
+        }
+
+        if (va == count) {
+            
+            cout << "La memoria real esta en la pagina: " << count << endl;
+        }
+
+    }
+
+    /*
+    cout << "Esta es la instruccion: " << endl;
+
+    for (int i = 0; i < info.size(); i++)
+        cout << info[i] << " ";
+        */
+}
