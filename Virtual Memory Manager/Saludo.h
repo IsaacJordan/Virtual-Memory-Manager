@@ -5,6 +5,8 @@
 #include <cstdlib> 
 #include "Process.h"
 using namespace std;
+map<int, int> AUX;
+map<int, int>::iterator itr;
 
 //Esta funcion es para realizar debbuging en el codigo
 void saludar() {
@@ -46,10 +48,11 @@ vector<int> removeDupWord(string str)
   
 }
 
-void accesso(vector<int> info) {
+void accesso(vector<int> info, int &count) {
 
     //A 17 5 0 ejemplo
-    int count = 0;
+    bool memory = false;
+    int cuenta = -1;
     int memoria = info[0];
     int proceso = info[1];
     int modificar = info[2];
@@ -60,19 +63,39 @@ void accesso(vector<int> info) {
 
     int va = memoria / 16;
 
-    //cout << "Esta en la direccion virtual: " << va << endl;
+
+    cout << "Esta en la direccion virtual: " << va << endl;
 
     for (int i = 0; i < RAM.size(); i++) {
         if (proceso == RAM.at(i)) {
-            cout << "Se encontro el proceso" << endl;
-            count = i;
-        }
-
-        if (va == count) {
             
-            cout << "La memoria real esta en la pagina: " << count << endl;
-        }
+            cuenta = i;
+            if (va == cuenta) {
 
+                cout << "El proceso se encuentra en la pagina: " << cuenta << " de la memoria real"<< endl;
+                memory = true;
+            }
+        }
+    }
+
+    if (!memory) {
+        for (int i = 0; i < SWAP.size(); i++) {
+            if (proceso == SWAP.at(i)) {
+                //cout << "Se encontro el proceso" << endl;
+                cuenta = i;
+                if (va == cuenta) {
+
+                    cout << "El proceso se encuentra en la pagina: " << i << " del Registro SWAP" << endl;
+                    memory = true;
+                }
+            }
+        }
+        if (memory) {
+            swap(info[0], info[1], count);
+        }
+        else if (!memory) {
+            cout << "No se encontro direccion real del proceso..." << endl;
+        }
     }
 
     /*
@@ -82,3 +105,49 @@ void accesso(vector<int> info) {
         cout << info[i] << " ";
         */
 }
+
+
+void liberar2(vector<int> info, int& count) {
+    
+    int proceso = info[0];
+    int contador = 0;
+    int pos;
+    //Agregamos el proceso al mapa de swap
+    for (int i = 0; i < RAM.size(); i++) {
+
+        if(proceso != RAM.at(i)) {
+            cout << "entre" << endl;
+            AUX.emplace(contador, RAM.at(i));
+            contador++;
+        }
+    }
+
+    //Imprimimos la memoria real
+    cout << "\nEl contenido en AUX es : \n";
+    cout << "\tPAGE\tPROCESS\n";
+    for (itr = AUX.begin(); itr != AUX.end(); ++itr) {
+        cout << '\t' << itr->first
+            << '\t' << itr->second << '\n';
+    }
+    cout << endl;
+    
+     //BORRAS
+    RAM.clear();
+
+    for (int i = 0; i < AUX.size(); i++) {
+        RAM.insert(pair<int, int>(i, AUX.at(i)));
+    }
+    //BORRAS
+    AUX.clear();
+
+    //Imprimimos la memoria real
+    cout << "\nEl contenido en Memoria Real es : \n";
+    cout << "\tPAGE\tPROCESS\n";
+    for (itr = RAM.begin(); itr != RAM.end(); ++itr) {
+        cout << '\t' << itr->first
+            << '\t' << itr->second << '\n';
+    }
+    cout << endl;
+ 
+}
+

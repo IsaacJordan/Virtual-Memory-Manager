@@ -34,6 +34,8 @@ void carga(int bt, int pss, int &count) {
 		RAM.insert(pair<int, int>(count, pss));
 		cout << "Se agrego contenido a la pagina: " << count << endl;
 		count = count +1;
+		//Process* pss = new Process();
+		//itoa(pss)->getData(bt,pss,true);
 	}
 
 	//Imprimimos la memoria real

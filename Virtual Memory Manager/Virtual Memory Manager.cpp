@@ -27,24 +27,26 @@ using namespace std;
 int main() {
     //Esta variable nos ayuda a llevar un conteo de las paginas de la memoria real, para saber si aun hay espacio disponible
     int count = 0;
+    vector<int> instruccion;
 
     do {
         //Declaramos una variable de tipo string para leer el input del usuario
         string input;
         getline(cin, input);
-        cout << "Input: " << input << endl;
         
-        //Enviamos el input a devolver solo los valores numericos
-        vector<int> instruccion = removeDupWord(input);
         
-        //Mostramos el contenido de nuestro nuevo vector
-        //for (int i = 0; i < instruccion.size(); i++)
-        //    cout << instruccion[i] << " ";
+        if (input[0] != 'C')
+        {
+            //Enviamos el input a devolver solo los valores numericos
+            instruccion = removeDupWord(input);
+        }
+        
 
     //Se utiliza un switch para leer la primer posicion del input y determinar que tipo de instruccion es
     switch (input[0]) {
         //Para el caso P se carga un proceso
         case 'P':
+            cout << "Input: " << input << endl;
             //Revisamos si el numero de bytes que se ingresaron son mayores al maximo permitido
             if (instruccion[0] > 2048 || instruccion[0] < 16) {
                 cout << "El numero de bytes es muy grande o muy pequeño para ser almacenado, vuelva a intentar" << endl;
@@ -63,15 +65,17 @@ int main() {
             break;
 
         case 'A':
-            accesso(instruccion);
+            cout << "Input: " << input << endl;
+            accesso(instruccion,count);
             break;
 
         case 'L':
             saludar();
+            liberar2(instruccion,count);
             break;
 
         case 'C':
-            saludar();
+            cout << input << endl;
             break;
 
         case 'F':
@@ -94,3 +98,10 @@ int main() {
     return 0;
 }
 
+
+
+
+
+//Mostramos el contenido de nuestro nuevo vector
+//for (int i = 0; i < instruccion.size(); i++)
+//    cout << instruccion[i] << " ";
