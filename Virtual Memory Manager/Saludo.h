@@ -52,7 +52,8 @@ void accesso(vector<int> info, int &count) {
 
     //A 17 5 0 ejemplo
     bool memory = false;
-    int cuenta = -1;
+    int cuentas = -1;
+    int cuentar = -1;
     int memoria = info[0];
     int proceso = info[1];
     int modificar = info[2];
@@ -62,40 +63,34 @@ void accesso(vector<int> info, int &count) {
     cout << "Modificar: " << modificar << endl;
 
     int va = memoria / 16;
+    cout << "va es: " << va << endl;
 
+    cout << "Pagina de la direccion virtual: " << va << endl;
 
-    cout << "Esta en la direccion virtual: " << va << endl;
-
-    for (int i = 0; i < RAM.size(); i++) {
-        if (proceso == RAM.at(i)) {
+    for (int i = 0; i < SWAP.size(); i++) {
+        if (proceso == SWAP.at(i)) {
+            memory = true;
+            cuentas++;
             
-            cuenta = i;
-            if (va == cuenta) {
-
-                cout << "El proceso se encuentra en la pagina: " << cuenta << " de la memoria real"<< endl;
-                memory = true;
+            if (cuentas == va) {
+                cout << "El proceso se encuentra en la pagina: " << i << " del Registrp SWAP" << endl;
             }
         }
     }
-
-    if (!memory) {
-        for (int i = 0; i < SWAP.size(); i++) {
-            if (proceso == SWAP.at(i)) {
-                //cout << "Se encontro el proceso" << endl;
-                cuenta = i;
-                if (va == cuenta) {
-
-                    cout << "El proceso se encuentra en la pagina: " << i << " del Registro SWAP" << endl;
-                    memory = true;
-                }
+    for (int i = 0; i < RAM.size(); i++) {
+        if (proceso == RAM.at(i)) {
+            memory = true;
+            cuentar++;
+            
+            if (cuentar == va) {
+                cout << "El proceso se encuentra en la pagina: " << i << " de la memoria real" << endl;
             }
         }
-        if (memory) {
-            swap(info[0], info[1], count);
-        }
-        else if (!memory) {
-            cout << "No se encontro direccion real del proceso..." << endl;
-        }
+    }
+  
+    if (!memory) {
+        cout << "No se encontro direccion real del proceso..." << endl;
+        swap(info[0], info[1], count);
     }
 
     /*
@@ -112,7 +107,7 @@ void liberar2(vector<int> info, int& count) {
     int proceso = info[0];
     int contador = 0;
     int pos;
-    //Agregamos el proceso al mapa de swap
+    //
     for (int i = 0; i < RAM.size(); i++) {
 
         if(proceso != RAM.at(i)) {

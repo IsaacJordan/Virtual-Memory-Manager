@@ -70,7 +70,6 @@ int main() {
             break;
 
         case 'L':
-            saludar();
             liberar2(instruccion,count);
             break;
 
