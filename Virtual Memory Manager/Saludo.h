@@ -53,7 +53,6 @@ void liberar2(vector<int> info, int& count) {
 
     int proceso = info[0];
     int contador = 0;
-    int pos;
     //
     for (int i = 0; i < RAM.size(); i++) {
         vector <int> valores = RAM.at(i);
@@ -99,6 +98,8 @@ void liberar2(vector<int> info, int& count) {
 
         cout << endl;
     }
+
+    count = RAM.size();
 
 }
 

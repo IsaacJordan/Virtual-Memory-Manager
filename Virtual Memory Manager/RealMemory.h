@@ -2,8 +2,10 @@
 #include <sstream>
 #include <vector>
 #include <string> 
-#include <cstdlib> 
+#include <cstdlib>
+#include <stdio.h> 
 #include "Process.h"
+#include <ctime>
 #include <map> 
 #include <algorithm>    // std::swap_ranges
 using namespace std;
@@ -180,6 +182,7 @@ void carga(int bt, int pss, int& count) {
 	//declaramos un booleano para saber si la memoria se imprimio el alguna funcion llamada, o la debemo imprimir en esta funcion
 	bool imprimir = true;
 	double pagefault = 0;
+	
 
 	STATS.insert(pair<int, vector<double> >(pss, { 1, 0, pagefault }));
 
@@ -258,6 +261,7 @@ void estadisticas() {
 	//navegamos por el mapa usando apuntadores
 	for (auto ii = STATS.begin(); ii != STATS.end(); ++ii) {
 		vector <double> inVect = (*ii).second;
+		//double segundos = difftime(time_t inVect[0], time_t inVect[1]);
 		if (inVect[1] != 1) {
 			cout << '\t' << (*ii).first << '\t';
 			cout << inVect[1] - inVect[0] << '\t' << inVect[2];
@@ -269,6 +273,7 @@ void estadisticas() {
 
 
 }
+
 
 void accesso(vector<int> info, int& count) {
 
