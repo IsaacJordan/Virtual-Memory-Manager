@@ -99,6 +99,39 @@ void liberar2(vector<int> info, int& count) {
         cout << endl;
     }
 
+    for (int i = 0; i < SWAP.size(); i++) {
+        vector <int> valores = SWAP.at(i);
+        int valor = valores[1];
+        if (proceso != valor) {
+            cout << "entre" << endl;
+            AUX.emplace(contador, SWAP.at(i));
+            contador++;
+        }
+    }
+    //BORRAS
+    SWAP.clear();
+    
+    for (int i = 0; i < AUX.size(); i++) {
+        SWAP.insert(pair<int, vector<int> >(i, AUX.at(i)));
+    }
+    //BORRAS
+    AUX.clear();
+
+    cout << "\nEl contenido en SWAP es : \n";
+    cout << "\tPAGE\tPROCESS\tPAGEPROCESS\n";
+    for (auto ii = SWAP.begin(); ii != SWAP.end(); ++ii) {
+        cout << '\t' << (*ii).first << '\t';
+        vector <int> myVector = (*ii).second;
+        for (unsigned j = 0; j < myVector.size(); j++) {
+            cout << myVector[j] << '\t' << '\t';
+        }
+        cout << endl;
+    }
+
+
+
+
+
     count = RAM.size();
 
 }

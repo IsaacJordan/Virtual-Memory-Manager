@@ -21,79 +21,93 @@
 #include <string> 
 #include <cstdlib> 
 #include "Saludo.h"
+#include <fstream>
 using namespace std;
 
 
 int main() {
+    
     //Esta variable nos ayuda a llevar un conteo de las paginas de la memoria real, para saber si aun hay espacio disponible
     int count = 0;
     vector<int> instruccion;
 
-    do {
-        //Declaramos una variable de tipo string para leer el input del usuario
-        string input;
-        getline(cin, input);
-
-
-        if (input[0] != 'C')
+    //string line;
+    ifstream myfile("ArchivoTrabajo.txt");
+    if (myfile.is_open())
+    {
+        while (myfile.good())
         {
-            //Enviamos el input a devolver solo los valores numericos
-            instruccion = removeDupWord(input);
+            //getline(myfile, line);
+            do {
+                //Declaramos una variable de tipo string para leer el input del usuario
+                string input;
+                getline(myfile, input);
+
+
+                if (input[0] != 'C')
+                {
+                    //Enviamos el input a devolver solo los valores numericos
+                    instruccion = removeDupWord(input);
+                }
+
+
+                //Se utiliza un switch para leer la primer posicion del input y determinar que tipo de instruccion es
+                switch (input[0]) {
+                    //Para el caso P se carga un proceso
+                case 'P':
+                    cout << "Input: " << input << endl;
+                    //Revisamos si el numero de bytes que se ingresaron son mayores al maximo permitido
+                    if (instruccion[0] > 2048 || instruccion[0] < 16) {
+                        cout << "El numero de bytes es muy grande o muy pequeño para ser almacenado, vuelva a intentar" << endl;
+                        break;
+                    }
+                    else if (count >= 127) {
+                        //Se necesita hacer un swap si la memoria real de 128 paginas esta llena (0 - 127 paginas)
+                        cout << "Se necesita hacer un swap, memoria llena!" << endl;
+                        swap(instruccion, count);
+                    }
+                    else {
+                        //Llamamos la funcion cargaproceso para subir el proceso recibido a la memoria real si hay espacio
+                        cargarproceso(instruccion, count);
+                    }
+
+                    break;
+
+                case 'A':
+                    cout << "Input: " << input << endl;
+                    accesso(instruccion, count);
+                    break;
+
+                case 'L':
+                    liberar2(instruccion, count);
+                    break;
+
+                case 'C':
+                    cout << input << endl;
+                    break;
+
+                case 'F':
+                    cout << "Input: " << input << endl;
+                    estadisticas();
+                    break;
+
+                case 'E':
+                    // 'E' es una instruccion para terminar el programa
+                    return 0;
+
+                default:
+                    //Desplegar cuando una instruccion no es valida
+                    cout << "La instruccion no es valida\n";
+                    break;
+                }
+            } while (true);
         }
+        myfile.close();
+    }
 
+    else cout << "Unable to open file";
 
-        //Se utiliza un switch para leer la primer posicion del input y determinar que tipo de instruccion es
-        switch (input[0]) {
-            //Para el caso P se carga un proceso
-        case 'P':
-            cout << "Input: " << input << endl;
-            //Revisamos si el numero de bytes que se ingresaron son mayores al maximo permitido
-            if (instruccion[0] > 2048 || instruccion[0] < 16) {
-                cout << "El numero de bytes es muy grande o muy pequeño para ser almacenado, vuelva a intentar" << endl;
-                break;
-            }
-            else if (count >= 127) {
-                //Se necesita hacer un swap si la memoria real de 128 paginas esta llena (0 - 127 paginas)
-                cout << "Se necesita hacer un swap, memoria llena!" << endl;
-                swap(instruccion, count);
-            }
-            else {
-                //Llamamos la funcion cargaproceso para subir el proceso recibido a la memoria real si hay espacio
-                cargarproceso(instruccion, count);
-            }
-
-            break;
-
-        case 'A':
-            cout << "Input: " << input << endl;
-            accesso(instruccion, count);
-            break;
-
-        case 'L':
-            liberar2(instruccion, count);
-            break;
-
-        case 'C':
-            cout << input << endl;
-            break;
-
-        case 'F':
-            cout << "Input: " << input << endl;
-            estadisticas();
-            break;
-
-        case 'E':
-            // 'E' es una instruccion para terminar el programa
-            return 0;
-
-        default:
-            //Desplegar cuando una instruccion no es valida
-            cout << "La instruccion no es valida\n";
-            break;
-        }
-    } while (true);
-
-
+   
 
     return 0;
 }
