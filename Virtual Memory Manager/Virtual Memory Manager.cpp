@@ -32,7 +32,7 @@ int main() {
     vector<int> instruccion;
 
     //string line;
-    ifstream myfile("perro.txt.txt");
+    ifstream myfile("ArchivoTrabajo.txt");
     if (myfile.is_open())
     {
         while (myfile.good())

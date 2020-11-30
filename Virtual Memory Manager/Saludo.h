@@ -79,7 +79,7 @@ void liberar2(vector<int> info, int& count) {
 
     //BORRAS
     RAM.clear();
-
+    contador = 0;
     for (int i = 0; i < AUX.size(); i++) {
         RAM.insert(pair<int, vector<int> >(i, AUX.at(i)));
     }
