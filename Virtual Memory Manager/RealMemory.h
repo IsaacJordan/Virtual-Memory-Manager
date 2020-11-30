@@ -111,7 +111,7 @@ void swap(int bt, int pss, int& count) {
 	}
 	else {
 		//Llevaremos un contador para saber el orden de la modificacion de la memoria real
-		//revisar la catidad de marcos necesarios para agregar a la memoria real
+		//revisar la catidad de marcos necesarios para agregar a la memoria real 
 		int marcos = bt;
 		if (marcos % 16 != 0) {
 			marcos = (marcos / 16) + 1;
