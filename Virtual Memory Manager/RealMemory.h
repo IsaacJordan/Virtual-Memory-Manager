@@ -181,10 +181,10 @@ void carga(int bt, int pss, int& count) {
 	cout << "Se recibio el proceso: " << pss << " de: " << bt << " bytes." << endl;
 	//declaramos un booleano para saber si la memoria se imprimio el alguna funcion llamada, o la debemo imprimir en esta funcion
 	bool imprimir = true;
-	double pagefault = 0;
+	int pagefault = 0;
 	
 
-	STATS.insert(pair<int, int >(pss, { pagefault }));
+	STATS.insert(pair<int, int >(pss, pagefault));
 
 	//revisar la catidad de marcos necesarios para agregar a la memoria real
 	int marcos = bt;
@@ -260,7 +260,6 @@ void estadisticas() {
 	cout << "\tPROCESS\tTURNAROUND\tPAGE FAULTS\n";
 	//navegamos por el mapa usando apuntadores
 	for (auto ii = STATS.begin(); ii != STATS.end(); ++ii) {
-		vector <double> inVect = (*ii).second;
 		//double segundos = difftime(time_t inVect[0], time_t inVect[1]);
 		
 			cout << '\t' << (*ii).first << '\t';
