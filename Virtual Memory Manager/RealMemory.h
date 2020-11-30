@@ -16,7 +16,7 @@ map<int, vector<int> > RAM;
 map<int, vector<int> > SWAP;
 
 //Mapa para llevar las estadisticas de cada proceso
-map<int, vector<double> > STATS;
+map<int, int > STATS;
 
 // Contador para llevar el registro de los swaps
 int contador = 0;
@@ -56,7 +56,7 @@ void swaplleno(int bt, int pss, int pagina) {
 			//BORRAS LO QUE HAY EN LA RAM EN ESA POSICION
 			RAM.erase(apuntador);
 			//MODIFICAS
-			cout << "Swap Out en la pagina: " << contador << " de la memoria real." << endl;
+			cout << "Swap Out en la pagina: " << apuntador << " de la memoria real." << endl;
 			//Agregas los nuevos valores a la RAM
 			RAM.insert(pair<int, vector<int> >(apuntador, { pagina,pss }));
 			//incrementas la pagina
@@ -184,7 +184,7 @@ void carga(int bt, int pss, int& count) {
 	double pagefault = 0;
 	
 
-	STATS.insert(pair<int, vector<double> >(pss, { 1, 0, pagefault }));
+	STATS.insert(pair<int, int >(pss, { pagefault }));
 
 	//revisar la catidad de marcos necesarios para agregar a la memoria real
 	int marcos = bt;
@@ -262,12 +262,12 @@ void estadisticas() {
 	for (auto ii = STATS.begin(); ii != STATS.end(); ++ii) {
 		vector <double> inVect = (*ii).second;
 		//double segundos = difftime(time_t inVect[0], time_t inVect[1]);
-		if (inVect[1] != 1) {
+		
 			cout << '\t' << (*ii).first << '\t';
-			cout << inVect[1] - inVect[0] << '\t' << inVect[2];
+			cout << "turn" << '\t' << (*ii).second << '\t';
 
 			cout << endl;
-		}
+		
 
 	}
 
@@ -292,7 +292,7 @@ void accesso(vector<int> info, int& count) {
 
 	cout << "Pagina de la direccion virtual: " << va << endl;
 
-	vector <double> val = STATS.at(proceso);
+	int val = STATS.at(proceso);
 
 	for (int i = 0; i < SWAP.size(); i++) {
 		vector <int> valores = SWAP.at(i);
@@ -302,10 +302,9 @@ void accesso(vector<int> info, int& count) {
 			if (valorn == va) {
 				cout << "El proceso se encuentra en la pagina: " << i << " del Registro SWAP" << endl;
 				cout << "Swap in" << endl;
-				double pagefault = val[2];
-				pagefault++;
+				int pagefault = val + 1;
 				STATS.erase(proceso);
-				STATS.insert(pair<int, vector<double> >(proceso, { val[0], val[1], pagefault }));
+				STATS.insert(pair<int, int >(proceso, { pagefault }));
 				swapin(i);
 			}
 		}
