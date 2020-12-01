@@ -9,6 +9,7 @@
 #include <map> 
 #include <algorithm>    // std::swap_ranges
 using namespace std;
+
 //Mapa para la memoria real
 map<int, vector<int> > RAM;
 
@@ -17,6 +18,8 @@ map<int, vector<int> > SWAP;
 
 //Mapa para llevar las estadisticas de cada proceso
 map<int, vector <double> > STATS;
+
+
 
 
 // Contador para llevar el registro de los swaps
@@ -143,13 +146,19 @@ void swap(int bt, int pss, int& count) {
 		//Agregamos el proceso al mapa de swap
 		for (int i = 0; i < marcos; i++) {
 
+
+			//Almacenamos en una variable tipo vector la informacion que hay en la RAM de la pagina que se le hara SWAP OUT
 			vector<int> procesodeswap = RAM.at(apuntador);
+			//Del vector anterior, extraemos el ID del proceso
 			int pswap = procesodeswap[1];
+			//Almacenamos en un vector las estadisticas del proceso al que le haremos SWAP
 			vector<double> val = STATS.at(pswap);
+			//Del vector, extraemos el timestamp
 			double timestamps = val[0];
 
+			//Insertamos en el SWAP la pagina a la que se le hizo SWAP OUT
 			SWAP.insert(pair<int, vector<int> >(contador, RAM.at(apuntador)));
-			//BORRAS
+			//BORRAS ESA 
 			RAM.erase(apuntador);
 			//MODIFICAS
 			cout << "Swap Out en la pagina: " << apuntador << " de la memoria real." << endl;
