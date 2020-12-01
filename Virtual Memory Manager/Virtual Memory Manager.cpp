@@ -14,63 +14,111 @@
     Pagina = 16 bytes = 1 pagina
     ------------------------------------
 */
-#include "Saludo.h"
 #include "Process.h"
 #include <iostream>
 #include <sstream>
 #include <vector>
 #include <string> 
 #include <cstdlib> 
+#include "Saludo.h"
+#include <fstream>
 using namespace std;
 
 
 int main() {
-
+    
+    //Esta variable nos ayuda a llevar un conteo de las paginas de la memoria real, para saber si aun hay espacio disponible
     int count = 0;
+    vector<int> instruccion;
 
-    do {
-        
-        string input;
-        getline(cin, input);
-        //Enviamos el input a devolver solo los valores numericos
-        vector<int> instruccion = removeDupWord(input);
-      
-        //Mostramos el contenido de nuestro nuevo vector
-        //for (int i = 0; i < instruccion.size(); i++)
-        //    cout << instruccion[i] << " ";
+    //string line;
+    ifstream myfile("Test.txt");
+    if (myfile.is_open())
+    {
+        while (myfile.good())
+        {
+            //getline(myfile, line);
+            do {
+                //Declaramos una variable de tipo string para leer el input del usuario
+                string input;
+                getline(myfile, input);
 
-    switch (input[0]) {
-        case 'P':
-            cargarproceso(instruccion, count);
-            break;
 
-        case 'A':
-            saludar();
-            break;
+                if (input[0] != 'C')
+                {
+                    //Enviamos el input a devolver solo los valores numericos
+                    instruccion = removeDupWord(input);
+                }
 
-        case 'L':
-            saludar();
-            break;
 
-        case 'C':
-            saludar();
-            break;
+                //Se utiliza un switch para leer la primer posicion del input y determinar que tipo de instruccion es
+                switch (input[0]) {
+                    //Para el caso P se carga un proceso
+                case 'P':
+                    cout << "Input: " << input << endl;
+                    //Revisamos si el numero de bytes que se ingresaron son mayores al maximo permitido
+                    if (instruccion[0] > 2048 || instruccion[0] < 16) {
+                        cout << "El numero de bytes es muy grande o muy pequeño para ser almacenado, vuelva a intentar" << endl;
+                        break;
+                    }
+                    else if (count >= 127) {
+                        //Se necesita hacer un swap si la memoria real de 128 paginas esta llena (0 - 127 paginas)
+                        cout << "Se necesita hacer un swap, memoria llena!" << endl;
+                        swap(instruccion, count);
+                    }
+                    else {
+                        //Llamamos la funcion cargaproceso para subir el proceso recibido a la memoria real si hay espacio
+                        cargarproceso(instruccion, count);
+                    }
 
-        case 'F':
-            saludar();
-            break;
+                    break;
 
-        case 'E':
-            return 0;
+                case 'A':
+                    cout << "Input: " << input << endl;
+                    accesso(instruccion, count);
+                    break;
 
-        default:
-            invalido();
-            break;
+                case 'L':
+                    cout << "Input: " << input << endl;
+                    liberar2(instruccion, count);
+                    break;
+
+                case 'C':
+                    cout << input << endl;
+                    break;
+
+                case 'F':
+                    cout << "Input: " << input << endl;
+                    estadisticas();
+                    break;
+
+                case 'E':
+                    // 'E' es una instruccion para terminar el programa
+                    system("PAUSE");
+                    return EXIT_SUCCESS;
+
+                default:
+                    //Desplegar cuando una instruccion no es valida
+                    cout << "La instruccion no es valida\n";
+                    break;
+                }
+            } while (true);
+            
         }
-    } while (true);
-    
-    
+        myfile.close();
+    }
+
+    else cout << "Unable to open file";
+
+   
 
     return 0;
 }
 
+
+
+
+
+//Mostramos el contenido de nuestro nuevo vector
+//for (int i = 0; i < instruccion.size(); i++)
+//    cout << instruccion[i] << " ";
