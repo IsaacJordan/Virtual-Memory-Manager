@@ -158,7 +158,7 @@ void swap(int bt, int pss, int& count) {
 
 			//Insertamos en el SWAP la pagina a la que se le hizo SWAP OUT
 			SWAP.insert(pair<int, vector<int> >(contador, RAM.at(apuntador)));
-			//BORRAS ESA 
+			//BORRAS ESA PAGINA DEL RAM
 			RAM.erase(apuntador);
 			//MODIFICAS
 			cout << "Swap Out en la pagina: " << apuntador << " de la memoria real." << endl;
@@ -166,23 +166,32 @@ void swap(int bt, int pss, int& count) {
 
 			//incremento la variable del timestamp
 			timestamps++;
+			//Borras lo que hay en STATS en ese proceso
 			STATS.erase(pswap);
+			//Insertas los valores actualizados
 			STATS.insert(pair<int, vector<double> >(pswap, { timestamps, 0, val[2] }));
 			
+			//Actualizas los apuntadores 
 			contador++;
 			apuntador++;
+			//Incrementas el contador de swapo uts
 			swapout++;
+			//Comprueba si a la mitad de cargar algun proceso se llenos la RAM
 			if ((apuntador == 128) and (i < marcos)) {
+				//calcula cuantos marcos quedaron por cargar
 				int faltantes = (marcos - (i + 1)) * 16;
 				count = 127;
+				//llama la funcion para que se terminen de llenar los marcos
 				swaplleno(faltantes, pss, (i + 1));
+				//actualizamos i para que salga del loop
 				i = marcos;
+				//Asignamos false a la variable para que no imprima la tabla ya que la funcion swaplleno ya lo hace
 				imprimir = false;
 			}
 		}
 
 		if (imprimir) {
-			//Imprimimos el registro SWAP
+			//Imprimimos el registro SWAP con ayuda de apuntadores
 			cout << "\nEl contenido en SWAP REGISTER es : \n";
 			cout << "\tPAGE\tPAGE PROCESS\tPROCESS\n";
 			for (auto ii = SWAP.begin(); ii != SWAP.end(); ++ii) {
@@ -198,7 +207,7 @@ void swap(int bt, int pss, int& count) {
 	}
 
 	if (imprimir) {
-		//Imprimimos la memoria real
+		//Imprimimos la memoria real con ayuda de apuntadores
 		cout << "\nEl contenido NUEVO en Memoria Real es : \n";
 		cout << "\tPAGE\tPAGE PROCESS\tPROCESS\n";
 		for (auto ii = RAM.begin(); ii != RAM.end(); ++ii) {
@@ -220,6 +229,7 @@ void carga(int bt, int pss, int& count) {
 	cout << "Se recibio el proceso: " << pss << " de: " << bt << " bytes." << endl;
 	//declaramos un booleano para saber si la memoria se imprimio el alguna funcion llamada, o la debemo imprimir en esta funcion
 	bool imprimir = true;
+	//declaramos una variable para inicializar el pagefault en el mapa STATS
 	double pagefault = 0;
 	
 	
@@ -233,7 +243,11 @@ void carga(int bt, int pss, int& count) {
 		marcos = bt / 16;
 	}
 
+	//Agregamos el nuevo proceso al mapa STATS
+	//El primer espacio es para el tournaround, por lo que le asignamos marcos
+	//Cada marco insertado equivale a 1 segundo
 	STATS.insert(pair<int, vector<double> >(pss, { double(marcos), 0 ,pagefault }));
+
 
 	cout << "Se requieren: " << marcos << " marcos." << endl;
 
@@ -394,6 +408,13 @@ void accesso(vector<int> info, int& count) {
 
 	if (!mem) {
 		cout << "No se encontro ese proceso en la memoria..." << endl;
+	}
+	else {
+		if (modificar == 1) {
+			val = STATS.at(proceso);
+			STATS.erase(proceso);
+			STATS.insert(pair<int, vector<double> >(proceso, { val[0], 0 , (val[2]+.1) }));
+		}
 	}
 
 	/*
