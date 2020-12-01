@@ -38,13 +38,14 @@ vector<int> removeDupWord(string str)
     // strings to store in string word
     while (ss >> word)
     {
-        // print the read word
-        //cout << word << "\n";
+        //De una libreria especial, stoi convierte un string a un entero para poderlo
+        //introducir a nuestro nuevo vector
         int num = stoi(word);
         vector.push_back(num);
     }
 
     vector.erase(vector.begin());
+    //Regresa el vector con la informacion deseada
     return vector;
 
 }
@@ -55,9 +56,11 @@ vector<int> removeDupWord(string str)
 //tamaño de la memoria real para saber si esta llena
 void liberar2(vector<int> info, int& count) {
 
+    //Nombre del proceso que se desea liberar
     int proceso = info[0];
     int contador = 0;
-    //
+    //LOOP que copia los procesos que son diferentas al buscado. De esta manera obtenemos un nuevo mapa
+    //sin el proceso que queremos borrar, pero ahora ordenado
     for (int i = 0; i < RAM.size(); i++) {
         vector <int> valores = RAM.at(i);
         int valor = valores[1];
@@ -79,21 +82,23 @@ void liberar2(vector<int> info, int& count) {
         cout << endl;
     }
 
+    //Se declara un vector que nos ayuda a mantener la informacion de estadisticas del proceso
     vector<double> val = STATS.at(proceso);
+    //Aumentamos por 0.1 segundos al eliminar cada marco del proceso
     double borradas = (RAM.size() - AUX.size()) * .1;
     double segundoliberar = val[0] + borradas;
-
     STATS.erase(proceso);
     STATS.insert(pair<int, vector<double> >(proceso, { segundoliberar, 1 , val[2] }));
 
-    //BORRAS
+    //Borramos el contenido de la memoria real
     RAM.clear();
-
+    
+    //Ingresamos los datos ordenados con el proceso eliminado y con todos los procesos restantes sin guecos
     contador = 0;
     for (int i = 0; i < AUX.size(); i++) {
         RAM.insert(pair<int, vector<int> >(i, AUX.at(i)));
     }
-    //BORRAS
+    //Borramos el contenido mapa auxiliar
     AUX.clear();
 
     //Imprimimos la memoria real
@@ -109,6 +114,7 @@ void liberar2(vector<int> info, int& count) {
         cout << endl;
     }
 
+    //Ingresamos los datos del registro swap a nuestro mapa auxiliar
     for (int i = 0; i < SWAP.size(); i++) {
         vector <int> valores = SWAP.at(i);
         int valor = valores[1];
@@ -117,23 +123,25 @@ void liberar2(vector<int> info, int& count) {
             contador++;
         }
     }
-
+    
+    //Aumentamos por 0.1 segundos al eliminar cada marco del proceso
     val = STATS.at(proceso);
     borradas = (SWAP.size() - AUX.size()) * .1;
     segundoliberar = val[0] + borradas;
-
     STATS.erase(proceso);
     STATS.insert(pair<int, vector<double> >(proceso, { segundoliberar, 1 , val[2] }));
 
-    //BORRAS
+    //Borramos el contenido del mapa del registro de swap
     SWAP.clear();
     
+    //Actualizamos nuestro registro de swap desde el mapa auxiliar con los procesos sin guecos
     for (int i = 0; i < AUX.size(); i++) {
         SWAP.insert(pair<int, vector<int> >(i, AUX.at(i)));
     }
     //BORRAS
     AUX.clear();
 
+    //Mostramos el contenido del registro de SWAP
     cout << "\nEl contenido en SWAP es : \n";
     cout << "\tPAGE\tPAGE PROCESS\tPROCESS\n";
     for (auto ii = SWAP.begin(); ii != SWAP.end(); ++ii) {
@@ -144,11 +152,7 @@ void liberar2(vector<int> info, int& count) {
         }
         cout << endl;
     }
-
-
-
-
-
+    //Actualizamos el contador global que lleva registro del tamaño de la memoria real
     count = RAM.size();
 
 }
