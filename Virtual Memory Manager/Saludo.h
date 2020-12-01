@@ -3,7 +3,6 @@
 #include <vector>
 #include <string> 
 #include <cstdlib> 
-#include "Process.h"
 using namespace std;
 map<int, vector<int> > AUX;
 
@@ -58,7 +57,6 @@ void liberar2(vector<int> info, int& count) {
         vector <int> valores = RAM.at(i);
         int valor = valores[1];
         if (proceso != valor) {
-            cout << "entre" << endl;
             AUX.emplace(contador, RAM.at(i));
             contador++;
         }
@@ -66,7 +64,7 @@ void liberar2(vector<int> info, int& count) {
 
     //Imprimimos la memoria real
     cout << "\nEl contenido en AUX es : \n";
-    cout << "\tPAGE\tPROCESS\tPAGEPROCESS\n";
+    cout << "\tPAGE\tPAGE PROCESS\tPROCESS\n";
     for (auto ii = AUX.begin(); ii != AUX.end(); ++ii) {
         cout << '\t' << (*ii).first << '\t';
         vector <int> myVector = (*ii).second;
@@ -76,9 +74,16 @@ void liberar2(vector<int> info, int& count) {
         cout << endl;
     }
 
+    vector<double> val = STATS.at(proceso);
+    double borradas = (RAM.size() - AUX.size()) * .1;
+    double segundoliberar = val[0] + borradas;
+
+    STATS.erase(proceso);
+    STATS.insert(pair<int, vector<double> >(proceso, { segundoliberar, 1 , val[2] }));
 
     //BORRAS
     RAM.clear();
+
     contador = 0;
     for (int i = 0; i < AUX.size(); i++) {
         RAM.insert(pair<int, vector<int> >(i, AUX.at(i)));
@@ -88,7 +93,7 @@ void liberar2(vector<int> info, int& count) {
 
     //Imprimimos la memoria real
     cout << "\nEl contenido en Memoria Real es : \n";
-    cout << "\tPAGE\tPROCESS\tPageProcess\n";
+    cout << "\tPAGE\tPAGE PROCESS\tPROCESS\n";
     for (auto ia = RAM.begin(); ia != RAM.end(); ++ia) {
         cout << '\t' << (*ia).first << '\t';
         vector <int> myVector = (*ia).second;
@@ -103,11 +108,18 @@ void liberar2(vector<int> info, int& count) {
         vector <int> valores = SWAP.at(i);
         int valor = valores[1];
         if (proceso != valor) {
-            cout << "entre" << endl;
             AUX.emplace(contador, SWAP.at(i));
             contador++;
         }
     }
+
+    val = STATS.at(proceso);
+    borradas = (SWAP.size() - AUX.size()) * .1;
+    segundoliberar = val[0] + borradas;
+
+    STATS.erase(proceso);
+    STATS.insert(pair<int, vector<double> >(proceso, { segundoliberar, 1 , val[2] }));
+
     //BORRAS
     SWAP.clear();
     
@@ -118,7 +130,7 @@ void liberar2(vector<int> info, int& count) {
     AUX.clear();
 
     cout << "\nEl contenido en SWAP es : \n";
-    cout << "\tPAGE\tPROCESS\tPAGEPROCESS\n";
+    cout << "\tPAGE\tPAGE PROCESS\tPROCESS\n";
     for (auto ii = SWAP.begin(); ii != SWAP.end(); ++ii) {
         cout << '\t' << (*ii).first << '\t';
         vector <int> myVector = (*ii).second;
