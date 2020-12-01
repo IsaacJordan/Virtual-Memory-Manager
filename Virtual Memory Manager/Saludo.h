@@ -152,11 +152,7 @@ void liberar2(vector<int> info, int& count) {
         }
         cout << endl;
     }
-
-
-
-
-
+    //Actualizamos el contador global que lleva registro del tamaño de la memoria real
     count = RAM.size();
 
 }
