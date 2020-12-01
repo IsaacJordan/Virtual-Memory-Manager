@@ -8,8 +8,8 @@
 #include <ctime>
 #include <map> 
 #include <algorithm>    // std::swap_ranges
-using namespace std;
 
+using namespace std;
 //Mapa para la memoria real
 map<int, vector<int> > RAM;
 
@@ -19,7 +19,19 @@ map<int, vector<int> > SWAP;
 //Mapa para llevar las estadisticas de cada proceso
 map<int, vector <double> > STATS;
 
+// Mapa para el registro de LRU
+map<int, int> LRU;
 
+
+//Esta funcion recibe la informacion del proceso qe se quiere agregar a la memoria real y el contador de memoria
+void cargarproceso(vector<int> info, int& count) {
+	carga(info[0], info[1], count);
+}
+
+// Esta funcion es llamada cuando
+void swap(vector<int> info, int& count) {
+	swap(info[0], info[1], count);
+}
 
 
 // Contador para llevar el registro de los swaps
@@ -54,7 +66,7 @@ void swaplleno(int bt, int pss, int pagina) {
 			marcos = bt / 16;
 		}
 
-		
+
 
 		//Agregamos el proceso al mapa de swap
 		for (int i = 0; i < marcos; i++) {
@@ -62,7 +74,7 @@ void swaplleno(int bt, int pss, int pagina) {
 			int pswap = procesodeswap[1];
 			vector<double> val = STATS.at(pswap);
 			double timestamps = val[0];
-			
+
 
 			SWAP.insert(pair<int, vector<int> >(contador, RAM.at(apuntador)));
 			//BORRAS LO QUE HAY EN LA RAM EN ESA POSICION
@@ -162,7 +174,7 @@ void swap(int bt, int pss, int& count) {
 			timestamps++;
 			STATS.erase(pswap);
 			STATS.insert(pair<int, vector<double> >(pswap, { timestamps, 0, val[2] }));
-			
+
 			contador++;
 			apuntador++;
 			swapout++;
@@ -215,8 +227,8 @@ void carga(int bt, int pss, int& count) {
 	//declaramos un booleano para saber si la memoria se imprimio el alguna funcion llamada, o la debemo imprimir en esta funcion
 	bool imprimir = true;
 	double pagefault = 0;
-	
-	
+
+
 
 	//revisar la catidad de marcos necesarios para agregar a la memoria real
 	int marcos = bt;
@@ -308,17 +320,17 @@ void estadisticas() {
 	//navegamos por el mapa usando apuntadores
 	for (auto ii = STATS.begin(); ii != STATS.end(); ++ii) {
 
-			vector<double> myVector = (*ii).second;
-			double timestamp = myVector[0];
-			double check = myVector[1];
-			double pagefault = myVector[2];
-			if (check == 1) {
+		vector<double> myVector = (*ii).second;
+		double timestamp = myVector[0];
+		double check = myVector[1];
+		double pagefault = myVector[2];
+		if (check == 1) {
 
-				cout << '\t' << (*ii).first << '\t' << timestamp << "s" << '\t' << '\t' << pagefault;
-			}			
+			cout << '\t' << (*ii).first << '\t' << timestamp << "s" << '\t' << '\t' << pagefault;
+		}
 
 
-			cout << endl;
+		cout << endl;
 
 	}
 
@@ -345,7 +357,7 @@ void accesso(vector<int> info, int& count) {
 
 	vector<double> val = STATS.at(proceso);
 	double read = val[0];
-	
+
 
 	for (int i = 0; i < SWAP.size(); i++) {
 		vector<double> val = STATS.at(proceso);
@@ -360,7 +372,7 @@ void accesso(vector<int> info, int& count) {
 				pagefault++;
 				read = val[0] + .1;
 				STATS.erase(proceso);
-				STATS.insert(pair<int, vector<double> >(proceso, { read, 0 ,pagefault}));
+				STATS.insert(pair<int, vector<double> >(proceso, { read, 0 ,pagefault }));
 				swapin(i);
 			}
 		}
@@ -376,7 +388,7 @@ void accesso(vector<int> info, int& count) {
 			if (valorn == va) {
 				read = val[0] + .1;
 				STATS.erase(proceso);
-				STATS.insert(pair<int, vector<double> >(proceso, { read, 0 , val[2]}));
+				STATS.insert(pair<int, vector<double> >(proceso, { read, 0 , val[2] }));
 				cout << "El proceso se encuentra en la pagina: " << i << " de la memoria real" << endl;
 				int memoriareal;
 				memoriareal = (i * 16) + (memoria - (va * 16));
@@ -395,4 +407,104 @@ void accesso(vector<int> info, int& count) {
 	for (int i = 0; i < info.size(); i++)
 		cout << info[i] << " ";
 		*/
+}
+
+void liberar2(vector<int> info, int& count) {
+
+	int proceso = info[0];
+	int contador = 0;
+	//
+	for (int i = 0; i < RAM.size(); i++) {
+		vector <int> valores = RAM.at(i);
+		int valor = valores[1];
+		if (proceso != valor) {
+			AUX.emplace(contador, RAM.at(i));
+			contador++;
+		}
+	}
+
+	//Imprimimos la memoria real
+	cout << "\nEl contenido en AUX es : \n";
+	cout << "\tPAGE\tPAGE PROCESS\tPROCESS\n";
+	for (auto ii = AUX.begin(); ii != AUX.end(); ++ii) {
+		cout << '\t' << (*ii).first << '\t';
+		vector <int> myVector = (*ii).second;
+		for (unsigned j = 0; j < myVector.size(); j++) {
+			cout << myVector[j] << '\t' << '\t';
+		}
+		cout << endl;
+	}
+
+	vector<double> val = STATS.at(proceso);
+	double borradas = (RAM.size() - AUX.size()) * .1;
+	double segundoliberar = val[0] + borradas;
+
+	STATS.erase(proceso);
+	STATS.insert(pair<int, vector<double> >(proceso, { segundoliberar, 1 , val[2] }));
+
+	//BORRAS
+	RAM.clear();
+
+	contador = 0;
+	for (int i = 0; i < AUX.size(); i++) {
+		RAM.insert(pair<int, vector<int> >(i, AUX.at(i)));
+	}
+	//BORRAS
+	AUX.clear();
+
+	//Imprimimos la memoria real
+	cout << "\nEl contenido en Memoria Real es : \n";
+	cout << "\tPAGE\tPAGE PROCESS\tPROCESS\n";
+	for (auto ia = RAM.begin(); ia != RAM.end(); ++ia) {
+		cout << '\t' << (*ia).first << '\t';
+		vector <int> myVector = (*ia).second;
+		for (unsigned j = 0; j < myVector.size(); j++) {
+			cout << myVector[j] << '\t' << '\t';
+		}
+
+		cout << endl;
+	}
+
+	for (int i = 0; i < SWAP.size(); i++) {
+		vector <int> valores = SWAP.at(i);
+		int valor = valores[1];
+		if (proceso != valor) {
+			AUX.emplace(contador, SWAP.at(i));
+			contador++;
+		}
+	}
+
+	val = STATS.at(proceso);
+	borradas = (SWAP.size() - AUX.size()) * .1;
+	segundoliberar = val[0] + borradas;
+
+	STATS.erase(proceso);
+	STATS.insert(pair<int, vector<double> >(proceso, { segundoliberar, 1 , val[2] }));
+
+	//BORRAS
+	SWAP.clear();
+
+	for (int i = 0; i < AUX.size(); i++) {
+		SWAP.insert(pair<int, vector<int> >(i, AUX.at(i)));
+	}
+	//BORRAS
+	AUX.clear();
+
+	cout << "\nEl contenido en SWAP es : \n";
+	cout << "\tPAGE\tPAGE PROCESS\tPROCESS\n";
+	for (auto ii = SWAP.begin(); ii != SWAP.end(); ++ii) {
+		cout << '\t' << (*ii).first << '\t';
+		vector <int> myVector = (*ii).second;
+		for (unsigned j = 0; j < myVector.size(); j++) {
+			cout << myVector[j] << '\t' << '\t';
+		}
+		cout << endl;
+	}
+
+
+
+
+
+	count = RAM.size();
+
 }

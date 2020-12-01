@@ -6,10 +6,6 @@
 using namespace std;
 map<int, vector<int> > AUX;
 
-//Esta funcion es para realizar debbuging en el codigo
-void saludar() {
-    cout << "FUNCIONA PRRO!\n";
-}
 
 //Esta funcion recibe la informacion del proceso qe se quiere agregar a la memoria real y el contador de memoria
 void cargarproceso(vector<int> info, int& count) {

@@ -32,7 +32,7 @@ int main() {
     vector<int> instruccion;
 
     //string line;
-    ifstream myfile("perro.txt.txt");
+    ifstream myfile("Test.txt");
     if (myfile.is_open())
     {
         while (myfile.good())
@@ -94,7 +94,8 @@ int main() {
 
                 case 'E':
                     // 'E' es una instruccion para terminar el programa
-                    return 0;
+                    system("PAUSE");
+                    return EXIT_SUCCESS;
 
                 default:
                     //Desplegar cuando una instruccion no es valida
@@ -102,6 +103,7 @@ int main() {
                     break;
                 }
             } while (true);
+            
         }
         myfile.close();
     }
