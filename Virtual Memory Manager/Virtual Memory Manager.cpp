@@ -79,6 +79,7 @@ int main() {
                     break;
 
                 case 'L':
+                    cout << "Input: " << input << endl;
                     liberar2(instruccion, count);
                     break;
 

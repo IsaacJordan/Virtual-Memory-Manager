@@ -116,6 +116,8 @@ void swaplleno(int bt, int pss, int pagina) {
 void swap(int bt, int pss, int& count) {
 	cout << "Swap Out" << endl;
 	bool imprimir = true;
+	double pagefault = 0;
+
 	//Reiniciamos el apuntador de la memoria real si ya se registro toda la memoria real FIFO
 	if (apuntador >= 128) {
 		apuntador = 0;
@@ -135,6 +137,9 @@ void swap(int bt, int pss, int& count) {
 		else {
 			marcos = bt / 16;
 		}
+
+		STATS.insert(pair<int, vector<double> >(pss, { double(marcos), 0 ,pagefault }));
+
 		//Agregamos el proceso al mapa de swap
 		for (int i = 0; i < marcos; i++) {
 
@@ -304,7 +309,7 @@ void estadisticas() {
 			double timestamp = myVector[0];
 			double check = myVector[1];
 			double pagefault = myVector[2];
-			if (check == 0) {
+			if (check == 1) {
 
 				cout << '\t' << (*ii).first << '\t' << timestamp << "s" << '\t' << '\t' << pagefault;
 			}			
@@ -336,8 +341,12 @@ void accesso(vector<int> info, int& count) {
 	cout << "Pagina de la direccion virtual: " << va << endl;
 
 	vector<double> val = STATS.at(proceso);
+	double read = val[0];
+	
 
 	for (int i = 0; i < SWAP.size(); i++) {
+		vector<double> val = STATS.at(proceso);
+		double pagefault = val[2];
 		vector <int> valores = SWAP.at(i);
 		int valor = valores[1];
 		int valorn = valores[0];
@@ -345,13 +354,16 @@ void accesso(vector<int> info, int& count) {
 			if (valorn == va) {
 				cout << "El proceso se encuentra en la pagina: " << i << " del Registro SWAP" << endl;
 				cout << "Swap in" << endl;
-				double pagefault = val[1] + 1;
+				pagefault++;
+				read = val[0] + .1;
 				STATS.erase(proceso);
-				STATS.insert(pair<int, vector<double> >(proceso, { val[0], pagefault }));
+				STATS.insert(pair<int, vector<double> >(proceso, { read, 0 ,pagefault}));
 				swapin(i);
 			}
 		}
 	}
+
+	val = STATS.at(proceso);
 
 	for (int i = 0; i < RAM.size(); i++) {
 		vector <int> valores = RAM.at(i);
@@ -359,6 +371,9 @@ void accesso(vector<int> info, int& count) {
 		int valorn = valores[0];
 		if (proceso == valor) {
 			if (valorn == va) {
+				read = val[0] + .1;
+				STATS.erase(proceso);
+				STATS.insert(pair<int, vector<double> >(proceso, { read, 0 , val[2]}));
 				cout << "El proceso se encuentra en la pagina: " << i << " de la memoria real" << endl;
 				int memoriareal;
 				memoriareal = (i * 16) + (memoria - (va * 16));
