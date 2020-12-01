@@ -16,7 +16,8 @@ map<int, vector<int> > RAM;
 map<int, vector<int> > SWAP;
 
 //Mapa para llevar las estadisticas de cada proceso
-map<int, int > STATS;
+map<int, vector <double> > STATS;
+
 
 // Contador para llevar el registro de los swaps
 int contador = 0;
@@ -49,16 +50,29 @@ void swaplleno(int bt, int pss, int pagina) {
 		else {
 			marcos = bt / 16;
 		}
+
+		
+
 		//Agregamos el proceso al mapa de swap
 		for (int i = 0; i < marcos; i++) {
+			vector<int> procesodeswap = RAM.at(apuntador);
+			int pswap = procesodeswap[1];
+			vector<double> val = STATS.at(pswap);
+			double timestamps = val[0];
+			
 
 			SWAP.insert(pair<int, vector<int> >(contador, RAM.at(apuntador)));
 			//BORRAS LO QUE HAY EN LA RAM EN ESA POSICION
 			RAM.erase(apuntador);
+
 			//MODIFICAS
 			cout << "Swap Out en la pagina: " << apuntador << " de la memoria real." << endl;
 			//Agregas los nuevos valores a la RAM
 			RAM.insert(pair<int, vector<int> >(apuntador, { pagina,pss }));
+			//incremento la variable del timestamp
+			timestamps++;
+			STATS.erase(pswap);
+			STATS.insert(pair<int, vector<double> >(pswap, { timestamps, 0, val[2] }));
 			//incrementas la pagina
 			pagina++;
 			//incrementas el apuntador del RAM
@@ -124,12 +138,23 @@ void swap(int bt, int pss, int& count) {
 		//Agregamos el proceso al mapa de swap
 		for (int i = 0; i < marcos; i++) {
 
+			vector<int> procesodeswap = RAM.at(apuntador);
+			int pswap = procesodeswap[1];
+			vector<double> val = STATS.at(pswap);
+			double timestamps = val[0];
+
 			SWAP.insert(pair<int, vector<int> >(contador, RAM.at(apuntador)));
 			//BORRAS
 			RAM.erase(apuntador);
 			//MODIFICAS
 			cout << "Swap Out en la pagina: " << apuntador << " de la memoria real." << endl;
 			RAM.insert(pair<int, vector<int> >(apuntador, { i,pss }));
+
+			//incremento la variable del timestamp
+			timestamps++;
+			STATS.erase(pswap);
+			STATS.insert(pair<int, vector<double> >(pswap, { timestamps, 0, val[2] }));
+			
 			contador++;
 			apuntador++;
 			swapout++;
@@ -181,10 +206,9 @@ void carga(int bt, int pss, int& count) {
 	cout << "Se recibio el proceso: " << pss << " de: " << bt << " bytes." << endl;
 	//declaramos un booleano para saber si la memoria se imprimio el alguna funcion llamada, o la debemo imprimir en esta funcion
 	bool imprimir = true;
-	int pagefault = 0;
+	double pagefault = 0;
 	
-
-	STATS.insert(pair<int, int >(pss, pagefault));
+	
 
 	//revisar la catidad de marcos necesarios para agregar a la memoria real
 	int marcos = bt;
@@ -194,6 +218,9 @@ void carga(int bt, int pss, int& count) {
 	else {
 		marcos = bt / 16;
 	}
+
+	STATS.insert(pair<int, vector<double> >(pss, { double(marcos), 0 ,pagefault }));
+
 	cout << "Se requieren: " << marcos << " marcos." << endl;
 
 	//Agregamos el proceso a la memoria real
@@ -241,8 +268,20 @@ void swapin(int page) {
 	SWAP.erase(page);
 	//Insertamos lo que hay en la pagina del RAM que vamos a hacer swap out
 	SWAP.insert(pair<int, vector<int> >(page, RAM.at(apuntador)));
+
+	vector<int> procesodeswap = RAM.at(apuntador);
+	int pswap = procesodeswap[1];
+	vector<double> val = STATS.at(pswap);
+	double timestamps = val[0];
+
 	//BORRAS lo que hay en la RAM
 	RAM.erase(apuntador);
+
+	//incremento la variable del timestamp
+	timestamps++;
+	STATS.erase(pswap);
+	STATS.insert(pair<int, vector<double> >(pswap, { timestamps, 0, val[2] }));
+
 	cout << "Swap IN de la pagina: " << page << " de la memoria swap." << endl;
 	//Insertamos lo que almacenamos del SWAP en el hueco que hay en la RAM
 	RAM.insert(pair<int, vector<int> >(apuntador, valores));
@@ -260,13 +299,18 @@ void estadisticas() {
 	cout << "\tPROCESS\tTURNAROUND\tPAGE FAULTS\n";
 	//navegamos por el mapa usando apuntadores
 	for (auto ii = STATS.begin(); ii != STATS.end(); ++ii) {
-		//double segundos = difftime(time_t inVect[0], time_t inVect[1]);
-		
-			cout << '\t' << (*ii).first << '\t';
-			cout << "turn" << '\t' << (*ii).second << '\t';
+
+			vector<double> myVector = (*ii).second;
+			double timestamp = myVector[0];
+			double check = myVector[1];
+			double pagefault = myVector[2];
+			if (check == 0) {
+
+				cout << '\t' << (*ii).first << '\t' << timestamp << "s" << '\t' << '\t' << pagefault;
+			}			
+
 
 			cout << endl;
-		
 
 	}
 
@@ -291,7 +335,7 @@ void accesso(vector<int> info, int& count) {
 
 	cout << "Pagina de la direccion virtual: " << va << endl;
 
-	int val = STATS.at(proceso);
+	vector<double> val = STATS.at(proceso);
 
 	for (int i = 0; i < SWAP.size(); i++) {
 		vector <int> valores = SWAP.at(i);
@@ -301,9 +345,9 @@ void accesso(vector<int> info, int& count) {
 			if (valorn == va) {
 				cout << "El proceso se encuentra en la pagina: " << i << " del Registro SWAP" << endl;
 				cout << "Swap in" << endl;
-				int pagefault = val + 1;
+				double pagefault = val[1] + 1;
 				STATS.erase(proceso);
-				STATS.insert(pair<int, int >(proceso, { pagefault }));
+				STATS.insert(pair<int, vector<double> >(proceso, { val[0], pagefault }));
 				swapin(i);
 			}
 		}
