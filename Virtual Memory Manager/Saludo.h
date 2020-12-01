@@ -4,20 +4,27 @@
 #include <string> 
 #include <cstdlib> 
 using namespace std;
+//Mapa auxiliar para realizar los swapings
 map<int, vector<int> > AUX;
 
 
 //Esta funcion recibe la informacion del proceso qe se quiere agregar a la memoria real y el contador de memoria
+//Esta funcion recibe los datos del proceso y un contador global que lleva registro del tamaño de la memoria real
 void cargarproceso(vector<int> info, int& count) {
     carga(info[0], info[1], count);
 }
 
-// Esta funcion es llamada cuando
+// Esta funcion es llamada cuando se busca realizar un swap por diferentes razones
+//Esta funcion recibe los datos del proceso y un contador global que lleva registro del tamaño de la memoria real
 void swap(vector<int> info, int& count) {
+    //La funcion es llamada mediante datos especificos a RealMemory.h para realizar el cambio definitivo.
     swap(info[0], info[1], count);
 }
 
+
 //Esta funcion se llama para remover los espacios del string input y guardar en un vector la informacion de tamano de proceso y su id
+//Recibe el string de la linea del archivo de texto para eliminar los espacios entre palabras y numeros
+//Despues, regresa la informacion en un string para poder acceder a esa informacion/datos mas facilmente
 vector<int> removeDupWord(string str)
 {
     // Used to split string around spaces.
@@ -43,7 +50,9 @@ vector<int> removeDupWord(string str)
 }
 
 
-
+//Esta funcion es llamada para liberar el espacio que ocupa un cierto proceso
+//Recibe la informacion del proceso en forma de vector y contador global que lleva la cuenta del
+//tamaño de la memoria real para saber si esta llena
 void liberar2(vector<int> info, int& count) {
 
     int proceso = info[0];
